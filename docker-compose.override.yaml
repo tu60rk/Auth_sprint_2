@@ -1,0 +1,14 @@
+version: '3'
+services:
+
+  film_elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+
+  film_redis:
+    image: redis:7.0.10-alpine
+
+  auth_postgres:
+    image: postgres:13
+
+  auth_redis:
+    image: redis:7.0.10-alpine

@@ -1,0 +1,12 @@
+[flake8]
+exclude =
+    .git,
+    venv,
+    __pycache__,
+    tests
+# per-file-ignores =
+#     faker/generator.py:E501
+#     src/main.py:E402
+#     src/services/common.py:E501
+max-complexity = 15
+max-line-length = 99
