@@ -1,0 +1,83 @@
+version: '3'
+services:
+
+  # ------- films ------- #
+  film_service:
+    build: ./service_film/.
+    depends_on:
+      - film_elasticsearch
+      - film_redis
+    env_file:
+      - .env
+
+  film_elasticsearch:
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: 'false'
+
+  film_redis:
+    command: redis-server --include /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./service_film/redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+  load_data_es:
+    build:
+      context: ./service_film/elastic/
+      dockerfile: ./elastic.Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - film_elasticsearch
+
+  # faker:
+  #   build:
+  #     context: .
+  #     dockerfile: ./faker/faker.Dockerfile
+  #   env_file:
+  #     - ./.env
+  #   depends_on:
+  #     - elasticsearch
+
+  # ------- auth ------ #
+  auth_service:
+    build: ./service_auth/.
+    depends_on:
+      - auth_postgres
+      - auth_redis
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  auth_postgres:
+    env_file:
+      - .env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "sh -c 'pg_isready -U ${AUTH_POSTGRES_USER} -d ${AUTH_POSTGRES_DB}'"
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    environment:
+      - POSTGRES_DB=${AUTH_POSTGRES_DB}
+      - POSTGRES_USER=${AUTH_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_POSTGRES_PASSWORD}
+
+  auth_redis:
+    command: redis-server --include /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./service_auth/redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+  # common services
+  nginx:
+    image: nginx:1.23.3
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:z
+      - ./nginx/configs:/etc/nginx/conf.d:z
+    depends_on:
+      - auth_service
+      - film_service
+    ports:
+      - "80:80"
