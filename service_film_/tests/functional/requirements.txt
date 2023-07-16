@@ -1,0 +1,11 @@
+aiohttp==3.8.4
+elasticsearch[async]==8.7.0
+pytest==7.3.2
+pytest-asyncio==0.21.0
+redis==4.5.5
+pydantic==1.10.7
+anyio==3.7.0
+
+# for stress testing
+locust==2.15.1
+Faker==4.0.0

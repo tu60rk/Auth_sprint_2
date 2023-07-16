@@ -3,7 +3,7 @@ services:
 
   # ------- films ------- #
   film_service:
-    build: ./service_film/.
+    build: ./service_film_/.
     depends_on:
       - film_elasticsearch
       - film_redis
@@ -18,11 +18,11 @@ services:
   film_redis:
     command: redis-server --include /usr/local/etc/redis/redis.conf
     volumes:
-      - ./service_film/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./service_film_/redis/redis.conf:/usr/local/etc/redis/redis.conf
 
   load_data_es:
     build:
-      context: ./service_film/elastic/
+      context: ./service_film_/elastic/
       dockerfile: ./elastic.Dockerfile
     env_file:
       - .env

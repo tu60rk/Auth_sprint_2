@@ -1,0 +1,67 @@
+version: '3'
+services:
+  service:
+    build: ../../
+    ports:
+      - "8000:8000"
+    depends_on:
+      - elasticsearch
+      - redis
+    env_file:
+      - ../../.env
+    command:
+      [
+        "gunicorn",
+        "--workers",
+        "1",
+        "--worker-class",
+        "uvicorn.workers.UvicornWorker",
+        "src.main:app",
+        "--bind",
+        "0.0.0.0:8000"
+      ]
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    ports:
+      - "9200:9200"
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: 'false'
+      bootstrap.memory_lock: 'true'
+      cluster.routing.allocation.disk.threshold_enabled: 'false'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  redis:
+    image: redis:7.0.10-alpine
+    command: redis-server --include /usr/local/etc/redis/redis.conf
+    volumes:
+      - ../../redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+  tests:
+    build:
+      context: ../../
+      dockerfile: ./tests/functional/Dockerfile
+    env_file:
+      - ../../.env
+    depends_on:
+      - service
+      - elasticsearch
+      - redis
+
+  locust:
+    build:
+      context: .
+      dockerfile: ./locust/locust.Dockerfile
+    ports:
+      - "8089:8089"
+    env_file:
+      - ../../.env
+    entrypoint: locust -f /locust/locust_tests.py --host=http://service:8000
+    depends_on:
+      - service
+      - elasticsearch
+      - redis
