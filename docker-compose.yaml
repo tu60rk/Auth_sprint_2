@@ -41,6 +41,7 @@ services:
   # ------- auth ------ #
   auth_service:
     build: ./service_auth/.
+    container_name: auth_service
     depends_on:
       - auth_postgres
       - auth_redis
@@ -88,3 +89,5 @@ services:
     ports:
       - '6831:6831/udp'
       - '16686:16686'
+    depends_on:
+      - auth_service
