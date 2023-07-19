@@ -14,6 +14,13 @@ services:
 
   auth_cache:
     image: redis:7.0.10-alpine
+
+  auth_jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - '6831:6831/udp'
+      - '16686:16686'
+
   # ------- admin ------ #
 
   admin_db:

@@ -1,5 +1,11 @@
 import os
 import sys
+import logging
+import time
+import random
+import string
+from uuid import uuid4
+from contextvars import ContextVar
 
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
@@ -7,17 +13,19 @@ sys.path.append(os.path.join(sys.path[0], 'src'))
 from contextlib import asynccontextmanager
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from redis.asyncio import Redis
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
 
 from api.v1 import auth, roles, users
 from core.config import settings
 from core.logger import LOGGING
 from db import db_redis
+from utils.jaeger import configure_tracer
 import logging
-
 
 
 origins = [
@@ -37,6 +45,7 @@ async def lifespan(app: FastAPI):
     await db_redis.redis.close()
 
 
+configure_tracer(settings.jaeger_host, settings.jaeger_port)
 app = FastAPI(
     title=settings.project_name,
     description=settings.project_description,
@@ -48,6 +57,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+@app.middleware('http')
+async def before_request(request: Request, call_next):
+    response = await call_next(request)
+    request_id = request.headers.get('X-Request-Id')
+    if not request_id:
+        return ORJSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'detail': 'X-Request-Id is required'}
+        )
+    return response
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -56,9 +78,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+FastAPIInstrumentor.instrument_app(app)
+
+
 app.include_router(auth.router, prefix='/api/v1/auth')
 app.include_router(roles.router, prefix='/api/v1/roles')
 app.include_router(users.router, prefix='/api/v1/users')
+
 
 if __name__ == '__main__':
     uvicorn.run(
