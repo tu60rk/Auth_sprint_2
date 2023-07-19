@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     redis_host: str = os.getenv("AUTH_REDIS_HOST", "127.0.0.1")
     redis_port: int = int(os.getenv("AUTH_REDIS_PORT", 6378))
 
+    # Настройки Jaeger
+    jaeger_host: str = os.getenv("AUTH_JAEGER_HOST", "auth_jaeger")
+    jaeger_port: int = int(os.getenv("AUTH_JAEGER_PORT", 6831))
+
     db_name: str = os.getenv("AUTH_POSTGRES_DB", "auth_database")
     db_user: str = os.getenv("AUTH_POSTGRES_USER", "auth")
     db_password: str = os.getenv("AUTH_POSTGRES_PASSWORD", None)

@@ -38,6 +38,7 @@ services:
   #   depends_on:
   #     - elasticsearch
 
+
   # ------- auth ------ #
   auth_service:
     build: ./service_auth/.
@@ -50,6 +51,7 @@ services:
     restart: unless-stopped
 
   auth_postgres:
+    container_name: auth_postgres
     env_file:
       - .env
     healthcheck:
@@ -67,13 +69,21 @@ services:
       - POSTGRES_PASSWORD=${AUTH_POSTGRES_PASSWORD}
 
   auth_redis:
+    container_name: auth_redis
     command: redis-server --include /usr/local/etc/redis/redis.conf
     volumes:
       - ./service_auth/redis/redis.conf:/usr/local/etc/redis/redis.conf
 
+  auth_jaeger:
+    container_name: auth_jaeger
+    depends_on:
+      - auth_service
+
+
   # common services
   nginx:
     image: nginx:1.23.3
+    container_name: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:z
       - ./nginx/configs:/etc/nginx/conf.d:z
@@ -82,12 +92,3 @@ services:
       - film_service
     ports:
       - "80:80"
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: jaeger
-    ports:
-      - '6831:6831/udp'
-      - '16686:16686'
-    depends_on:
-      - auth_service

@@ -17,39 +17,21 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from redis.asyncio import Redis
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider        
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 
 
 from api.v1 import auth, roles, users
 from core.config import settings
 from core.logger import LOGGING
 from db import db_redis
+from utils.jaeger import configure_tracer
 import logging
-
 
 
 origins = [
     "http://localhost",
     "http://localhost:8000",
 ]
-
-
-def configure_tracer() -> None:
-    trace.set_tracer_provider(TracerProvider())
-    trace.get_tracer_provider().add_span_processor(
-        BatchSpanProcessor(
-            JaegerExporter(
-                agent_host_name='jaeger',
-                agent_port=6831,
-            )
-        )
-    )
-    # Чтобы видеть трейсы в консоли
-    trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
 
 
 @asynccontextmanager
@@ -63,7 +45,7 @@ async def lifespan(app: FastAPI):
     await db_redis.redis.close()
 
 
-configure_tracer()
+configure_tracer(settings.jaeger_host, settings.jaeger_port)
 app = FastAPI(
     title=settings.project_name,
     description=settings.project_description,
@@ -81,7 +63,10 @@ async def before_request(request: Request, call_next):
     response = await call_next(request)
     request_id = request.headers.get('X-Request-Id')
     if not request_id:
-        return ORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={'detail': 'X-Request-Id is required'})
+        return ORJSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'detail': 'X-Request-Id is required'}
+        )
     return response
 
 
