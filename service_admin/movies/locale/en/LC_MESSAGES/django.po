@@ -1,0 +1,100 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-29 06:53+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: movies/admin.py:8
+msgid "decade rating"
+msgstr "Rating"
+
+#: movies/admin.py:14
+msgid "between 0 and 25"
+msgstr "Between 0 and 25"
+
+#: movies/admin.py:15
+msgid "between 25 and 50"
+msgstr "Between 25 and 50"
+
+#: movies/admin.py:16
+msgid "between 50 and 75"
+msgstr "Between 50 and 75"
+
+#: movies/admin.py:17
+msgid "between 75 and 100"
+msgstr "Between 75 and 100"
+
+#: movies/apps.py:8
+msgid "movies"
+msgstr "Films"
+
+#: movies/models.py:25
+msgid "Genre name"
+msgstr "Genre name"
+
+#: movies/models.py:26
+msgid "Genre description"
+msgstr "Genre description"
+
+#: movies/models.py:38
+msgid "Name actor"
+msgstr "Name actor"
+
+#: movies/models.py:52
+msgid "TV show"
+msgstr "TV show"
+
+#: movies/models.py:53
+msgid "Video"
+msgstr "Movie"
+
+#: movies/models.py:55
+msgid "Film title"
+msgstr "Film title"
+
+#: movies/models.py:56
+msgid "Film description"
+msgstr "Film description"
+
+#: movies/models.py:57
+msgid "Date of film creation"
+msgstr "Date of film creation"
+
+#: movies/models.py:59
+msgid "Raiting film"
+msgstr "Raiting film"
+
+#: movies/models.py:64
+msgid "Film type"
+msgstr "Film type"
+
+#: movies/models.py:69
+msgid "certificate"
+msgstr "Film certificate"
+
+#: movies/models.py:70
+msgid "file"
+msgstr "Adding file"
+
+#: movies/models.py:98
+msgid "Person role"
+msgstr "Person role"
+
+#, fuzzy
+#~| msgid "movies"
+#~ msgid "Movie"
+#~ msgstr "Film"

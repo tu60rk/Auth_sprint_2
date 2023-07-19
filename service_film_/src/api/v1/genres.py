@@ -11,6 +11,7 @@ from api.v1.common import PaginateQueryParams
 from api.v1.models import Genres
 from core.config import settings
 from services.genre import GenreService, get_genre_service
+from src.utils.oauth2 import security_jwt
 
 
 router = APIRouter()
@@ -26,6 +27,7 @@ router = APIRouter()
 )
 @cache(expire=settings.redis_cache_expires)
 async def get_all_genres(
+    user: Annotated[dict, Depends(security_jwt)],
     pages: Annotated[PaginateQueryParams, Depends()],
     genre_service: GenreService = Depends(get_genre_service),
 ) -> List[Genres]:
@@ -53,6 +55,7 @@ async def get_all_genres(
 )
 @cache(expire=settings.redis_cache_expires)
 async def get_genre_by_id(
+    user: Annotated[dict, Depends(security_jwt)],
     genre_id: uuid.UUID,
     genre_service: GenreService = Depends(get_genre_service),
 ) -> Genres:

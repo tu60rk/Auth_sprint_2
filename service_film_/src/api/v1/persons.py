@@ -10,6 +10,7 @@ from api.v1.common import PaginateQueryParams
 from api.v1.models import ShortFilm, Person
 from core.config import settings
 from services.person import PersonService, get_person_service
+from src.utils.oauth2 import security_jwt_check
 
 
 router = APIRouter()
@@ -24,6 +25,7 @@ router = APIRouter()
             )
 @cache(expire=settings.redis_cache_expires)
 async def films_by_person_id(
+    user: Annotated[dict, Depends(security_jwt_check)],
     person_id: uuid.UUID,
     pages: Annotated[PaginateQueryParams, Depends()],
     person_service: PersonService = Depends(get_person_service),
@@ -56,6 +58,7 @@ async def films_by_person_id(
             )
 @cache(expire=settings.redis_cache_expires)
 async def person_by_id(
+    user: Annotated[dict, Depends(security_jwt_check)],
     person_id: uuid.UUID,
     person_service: PersonService = Depends(get_person_service),
 ) -> Person:
@@ -84,6 +87,7 @@ async def person_by_id(
             )
 @cache(expire=settings.redis_cache_expires)
 async def person_search(
+    user: Annotated[dict, Depends(security_jwt_check)],
     pages: Annotated[PaginateQueryParams, Depends()],
     person_service: PersonService = Depends(get_person_service),
     query: str = Query(

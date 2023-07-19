@@ -4,6 +4,7 @@ from pydantic import BaseSettings
 
 from src.core.logger import LOGGING
 
+
 class Settings(BaseSettings):
     # Название проекта. Используется в Swagger-документации
     project_name: str = os.getenv("PROJECT_NAME", "Simple API for AUTH")

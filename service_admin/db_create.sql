@@ -1,0 +1,2 @@
+CREATE SCHEMA IF NOT EXISTS content;
+ALTER ROLE CURRENT_USER SET search_path TO content,public;
