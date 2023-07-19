@@ -1,4 +1,5 @@
 import os
+
 from logging import config as logging_config
 from pydantic import BaseSettings
 
@@ -23,6 +24,8 @@ class Settings(BaseSettings):
     elastic_host = os.getenv("FILM_ELASTIC_HOST", "127.0.0.1")
     elastic_port = int(os.getenv("FILM_ELASTIC_PORT", 9200))
 
+    JWT_PUBLIC_KEY: str = os.getenv('JWT_PUBLIC_KEY', None)
+    JWT_ALGORITHM: str = os.getenv('ALGORITHM', 'RS256')
     # Корень проекта
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

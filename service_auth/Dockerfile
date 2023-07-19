@@ -35,7 +35,3 @@ USER app
 
 
 CMD ["/opt/app/entrypoint.sh"]
-# ENTRYPOINT \
-#     alembic revision --autogenerate -m "first_migration" --rev-id="1" && \
-#     alembic upgrade head && \
-#     gunicorn --workers 1 --worker-class uvicorn.workers.UvicornWorker src.main:app --bind $AUTH_APP_HOST:$AUTH_APP_PORT
