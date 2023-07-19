@@ -1,0 +1,102 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-29 06:53+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: movies/admin.py:8
+msgid "decade rating"
+msgstr "Рейтинг"
+
+#: movies/admin.py:14
+msgid "between 0 and 25"
+msgstr "Между 0 и 25"
+
+#: movies/admin.py:15
+msgid "between 25 and 50"
+msgstr "Между 25 и 50"
+
+#: movies/admin.py:16
+msgid "between 50 and 75"
+msgstr "Между 50 и 75"
+
+#: movies/admin.py:17
+msgid "between 75 and 100"
+msgstr "Между 75 и 100"
+
+#: movies/apps.py:8
+msgid "movies"
+msgstr "Фильмы"
+
+#: movies/models.py:25
+msgid "Genre name"
+msgstr "Название жанра"
+
+#: movies/models.py:26
+msgid "Genre description"
+msgstr "Описание жанра"
+
+#: movies/models.py:38
+msgid "Name actor"
+msgstr "Имя актера"
+
+#: movies/models.py:52
+msgid "TV show"
+msgstr "ТВ шоу"
+
+#: movies/models.py:53
+msgid "Video"
+msgstr "Видео"
+
+#: movies/models.py:55
+msgid "Film title"
+msgstr "Название фильма"
+
+#: movies/models.py:56
+msgid "Film description"
+msgstr "Описание фильма"
+
+#: movies/models.py:57
+msgid "Date of film creation"
+msgstr "Дата создания фильма"
+
+#: movies/models.py:59
+msgid "Raiting film"
+msgstr "Рейтинг фильма"
+
+#: movies/models.py:64
+msgid "Film type"
+msgstr "Тип фильма"
+
+#: movies/models.py:69
+msgid "certificate"
+msgstr "Лицензия фильма"
+
+#: movies/models.py:70
+msgid "file"
+msgstr "Добавочный файл к фильму"
+
+#: movies/models.py:98
+msgid "Person role"
+msgstr "Роль актера"
+
+#, fuzzy
+#~| msgid "movies"
+#~ msgid "Movie"
+#~ msgstr "Фильм"

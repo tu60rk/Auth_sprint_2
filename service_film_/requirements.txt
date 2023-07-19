@@ -21,6 +21,9 @@ uvicorn==0.22.0
 uvloop==0.17.0 ; sys_platform != "win32" and implementation_name == "cpython"
 
 # need for faker data
-Faker==4.0.0
-pandas==2.0.2
-tqdm==4.65.0
+# Faker==4.0.0
+# pandas==2.0.2
+# tqdm==4.65.0
+
+# for tokens
+async-fastapi-jwt-auth[asymmetric]==0.5.1
