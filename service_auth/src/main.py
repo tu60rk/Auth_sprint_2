@@ -1,12 +1,6 @@
 import os
 import sys
 import logging
-import time
-import random
-import string
-from uuid import uuid4
-from contextvars import ContextVar
-
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
@@ -25,6 +19,7 @@ from core.config import settings
 from core.logger import LOGGING
 from db import db_redis
 from utils.jaeger import configure_tracer
+from utils.limits import check_limit
 import logging
 
 
@@ -60,8 +55,15 @@ app = FastAPI(
 
 @app.middleware('http')
 async def before_request(request: Request, call_next):
-    response = await call_next(request)
+    user_id = request.headers.get('X-Forwarded-For')
     request_id = request.headers.get('X-Request-Id')
+    result = await check_limit(user_id=user_id)
+    if result:
+        return ORJSONResponse(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            content={'detail': 'Too many requests'}
+        )
+    response = await call_next(request)
     if not request_id:
         return ORJSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,

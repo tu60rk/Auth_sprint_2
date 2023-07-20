@@ -39,6 +39,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = os.getenv('ALGORITHM', 'RS256')
     SAULT: str = os.getenv('SAULT', '')
 
+    REQUEST_LIMIT_PER_MINUTE: int = os.getenv('REQUEST_LIMIT_PER_MINUTE', 20)
+
 
 settings = Settings()
 
