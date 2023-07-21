@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     # Настройка приложения
     app_host: str = os.getenv("AUTH_APP_HOST", "0.0.0.0")
     app_port: int = int(os.getenv("AUTH_APP_PORT", 8001))
+    app_name: str = os.getenv("AUTH_APP_NAME", "auth_service")
 
     # Настройки Redis
     redis_host: str = os.getenv("AUTH_REDIS_HOST", "127.0.0.1")
@@ -22,6 +23,7 @@ class Settings(BaseSettings):
     # Настройки Jaeger
     jaeger_host: str = os.getenv("AUTH_JAEGER_HOST", "auth_jaeger")
     jaeger_port: int = int(os.getenv("AUTH_JAEGER_PORT", 6831))
+    enable_tracer: bool = os.getenv("AUTH_JAEGER_ENABLE_TRACER", False) == "True"
 
     db_name: str = os.getenv("AUTH_POSTGRES_DB", "auth_database")
     db_user: str = os.getenv("AUTH_POSTGRES_USER", "auth")

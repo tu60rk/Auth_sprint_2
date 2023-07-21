@@ -40,7 +40,9 @@ async def lifespan(app: FastAPI):
     await db_redis.redis.close()
 
 
-configure_tracer(settings.jaeger_host, settings.jaeger_port)
+if settings.enable_tracer:
+    configure_tracer(settings.jaeger_host, settings.jaeger_port)
+
 app = FastAPI(
     title=settings.project_name,
     description=settings.project_description,
