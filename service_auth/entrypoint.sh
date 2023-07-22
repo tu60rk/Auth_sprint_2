@@ -5,7 +5,7 @@ if [ $result -eq 1 ]
 then
     echo 'migrations applied';
 else
-    alembic revision --autogenerate -m "first_migration" --rev-id="1" && \
+    # alembic revision --autogenerate -m "first_migration" --rev-id="1" && \
     alembic upgrade head;
 fi
 

@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     db_name: str = os.getenv("AUTH_POSTGRES_DB", "auth_database")
     db_user: str = os.getenv("AUTH_POSTGRES_USER", "auth")
     db_password: str = os.getenv("AUTH_POSTGRES_PASSWORD", None)
-    db_host: str = os.getenv("AUTH_POSTGRES_HOST", "postgres")
+    db_host: str = os.getenv("AUTH_POSTGRES_HOST", "auth_db")
     db_port: int = int(os.getenv("AUTH_POSTGRES_PORT", 5432))
     dsl_database: str = f"postgresql+asyncpg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?async_fallback=True"
     # Корень проекта
