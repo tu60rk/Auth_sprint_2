@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     # Настройка приложения
     app_host: str = Field("0.0.0.0", env="AUTH_APP_HOST")
     app_port: int = Field(8001, env="AUTH_APP_PORT")
+    app_name: str = Field("auth_service", env="AUTH_APP_NAME")
 
     # Настройки Redis
     redis_host: str = Field("127.0.0.1", env="AUTH_REDIS_HOST")
@@ -22,6 +23,7 @@ class Settings(BaseSettings):
     # Настройки Jaeger
     jaeger_host: str = Field("auth_jaeger", env="AUTH_JAEGER_HOST")
     jaeger_port: int = Field(6831, env="AUTH_JAEGER_PORT")
+    enable_tracer: bool = os.getenv("AUTH_JAEGER_ENABLE_TRACER", False).lower() == "True"
 
     origins: list = [
         "http://localhost",
@@ -31,10 +33,9 @@ class Settings(BaseSettings):
     db_name: str = Field("auth_database", env="AUTH_POSTGRES_DB")
     db_user: str = Field("auth", env="AUTH_POSTGRES_USER")
     db_password: str = Field(None, env="AUTH_POSTGRES_PASSWORD")
-    db_host: str = Field("postgres", env="AUTH_POSTGRES_HOST")
+    db_host: str = Field("auth_db", env="AUTH_POSTGRES_HOST")
     db_port: int = Field(5432, env="AUTH_POSTGRES_PORT")
 
-    # Update dsl_database to use AUTH_POSTGRES_PORT environment variable directly
     dsl_database: str = Field(
         None,
         env="AUTH_POSTGRES_DSL_DATABASE"
