@@ -313,10 +313,10 @@ class AuthService:
 def auth_service(
     db: AsyncSession = Depends(get_session),
     redis: Redis = Depends(get_redis),
-    Authorize: AuthJWT = Depends()
+    authorize: AuthJWT = Depends()
 ) -> AuthService:
     return AuthService(
         db_service=DbService(db=db),
         redis_service=RedisService(redis=redis),
-        Authorize=Authorize,
+        authorize=authorize,
     )

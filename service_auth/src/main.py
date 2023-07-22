@@ -1,6 +1,5 @@
 import os
 import sys
-import logging
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
@@ -21,12 +20,6 @@ from db import db_redis
 from utils.jaeger import configure_tracer
 from utils.limits import check_limit
 import logging
-
-
-origins = [
-    "http://localhost",
-    "http://localhost:8000",
-]
 
 
 @asynccontextmanager
@@ -76,7 +69,7 @@ async def before_request(request: Request, call_next):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
@@ -96,7 +89,6 @@ if __name__ == '__main__':
         'main:app',
         host=settings.app_host,
         port=settings.app_port,
-        reload=True,
         log_config=LOGGING,
         log_level=logging.DEBUG,
     )
