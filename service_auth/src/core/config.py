@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # Настройки Jaeger
     jaeger_host: str = Field("auth_jaeger", env="AUTH_JAEGER_HOST")
     jaeger_port: int = Field(6831, env="AUTH_JAEGER_PORT")
-    enable_tracer: bool = os.getenv("AUTH_JAEGER_ENABLE_TRACER", False).lower() == "True"
+    enable_tracer: bool = Field(False, env="AUTH_JAEGER_ENABLE_TRACER")
 
     origins: list = [
         "http://localhost",

@@ -26,10 +26,10 @@ class AuthService:
         self,
         db_service: DbService,
         redis_service: RedisService,
-        Authorize: AuthJWT
+        authorize: AuthJWT
     ) -> None:
         self.redis_service = redis_service
-        self.Authorize = Authorize
+        self.authorize = authorize
         self.db_service = db_service
 
     async def __create_tokens(
@@ -65,10 +65,10 @@ class AuthService:
                 }
             )
 
-        access_token = await self.Authorize.create_access_token(
+        access_token = await self.authorize.create_access_token(
             **params_for_access
         )
-        refresh_token = await self.Authorize.create_refresh_token(
+        refresh_token = await self.authorize.create_refresh_token(
             **params_for_access
         )
         return Tokens(access_token=access_token, refresh_token=refresh_token)
@@ -214,14 +214,14 @@ class AuthService:
     async def refresh(self, refresh_token: str, user_agent: str) -> Tokens:
         # check token
         try:
-            await self.Authorize._verify_jwt_in_request(
+            await self.authorize._verify_jwt_in_request(
                 token=refresh_token,
                 type_token='refresh',
                 token_from='headers'
             )
 
             # check user
-            data_token = await self.Authorize.get_raw_jwt(refresh_token)
+            data_token = await self.authorize.get_raw_jwt(refresh_token)
             sub = data_token.get('sub')
             existing_user = await self.__check_user_exist_active(
                 by='user',
