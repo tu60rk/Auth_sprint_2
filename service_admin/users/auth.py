@@ -23,13 +23,8 @@ class CustomBackend(BaseBackend):
             return None
 
         data = response.json()
-        response = requests.get(
-            url='http://auth_service:8000/api/v1/users/me',
-            headers={'Authorization': f'Bearer {data.get("access_token")}'}
-        )
-        data = response.json()
         try:
-            user, created = User.objects.get_or_create(id=data['id'],)
+            user, created = User.objects.get_or_create(id=data.get('user_id'),)
             user.email = data.get('email')
             user.first_name = data.get('first_name', 'test')
             user.last_name = data.get('last_name', 'test')

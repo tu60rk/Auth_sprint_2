@@ -9,7 +9,7 @@ from core.config import settings
 
 def configure_tracer(host, port) -> None:
     resource = Resource(attributes={
-        "service.name": settings.app_name
+        "service.name": settings.AUTH_APP_HOST
     })
 
     trace.set_tracer_provider(TracerProvider(resource=resource))

@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from functools import lru_cache
 from typing import Optional
@@ -19,6 +20,7 @@ from src.models.entity import (
 )
 from src.core.config import settings
 from core.oauth2 import AuthJWT
+from .providers.yandex import YandexProvider
 
 
 class AuthService:
@@ -106,6 +108,44 @@ class AuthService:
             return HTTPStatus.BAD_REQUEST
         return existing_user[0]
 
+    async def __generate_and_save_tokens(
+        self,
+        user_id: uuid.UUID,
+        email: str,
+        user_agent: str,
+    ) -> Tokens:
+        try:
+            user_roles = await self.db_service.get_user_roles(
+                    user_id=user_id
+                )
+
+            # create access and refresh tokens
+            tokens = await self.__create_tokens(
+                subject=str(user_id),
+                is_ex=True,
+                user_claims={
+                    "roles": user_roles,
+                    "email": email
+                }
+            )
+            # save access token
+            await self.redis_service.add_token(
+                user_id=str(user_id),
+                access_token=tokens.access_token,
+                user_agent=user_agent
+            )
+            # save refresh token
+            data_refresh_token = RefreshToken(
+                user_id=user_id,
+                user_token=tokens.refresh_token,
+                is_active=true(),
+                user_agent=user_agent
+            )
+            await self.db_service.insert_data(data_refresh_token)
+            return tokens
+        except Exception:
+            return None
+
     async def create_user(self, user_info: UserInDB) -> Optional[UserInDB]:
         try:
             user_dto = jsonable_encoder(user_info)
@@ -169,34 +209,13 @@ class AuthService:
             if not password_match:
                 return HTTPStatus.UNAUTHORIZED
 
-            user_roles = await self.db_service.get_user_roles(
-                user_id=existing_user.id
-            )
-
-            # create access and refresh tokens
-            tokens = await self.__create_tokens(
-                subject=str(existing_user.id),
-                is_ex=True,
-                user_claims={
-                    "roles": user_roles,
-                    "email": existing_user.email
-                }
-            )
-
-            # save access token
-            await self.redis_service.add_token(
-                user_id=str(existing_user.id),
-                access_token=tokens.access_token,
-                user_agent=user_agent
-            )
-            # save refresh token
-            data_refresh_token = RefreshToken(
+            tokens = await self.__generate_and_save_tokens(
                 user_id=existing_user.id,
-                user_token=tokens.refresh_token,
-                is_active=true(),
-                user_agent=user_agent
+                email=existing_user.email,
+                user_agent=user_agent,
             )
-            await self.db_service.insert_data(data_refresh_token)
+            if tokens is None:
+                return HTTPStatus.NOT_IMPLEMENTED
             # add data to account history
             data_header = AccountHistory(
                 user_id=existing_user.id,
@@ -209,6 +228,26 @@ class AuthService:
                 response.set_cookie('refresh_token', tokens.refresh_token, settings.REFRESH_TOKEN_EXPIRES_IN, settings.REFRESH_TOKEN_EXPIRES_IN, '/', None, False, True, 'lax')
         except Exception:
             return None
+        return tokens, existing_user
+
+    async def login_by_yandex(
+        self,
+        code: int,
+        yandex_provider: YandexProvider,
+        user_agent: str
+    ) -> Tokens:
+        result = await yandex_provider.register(code, self)
+        if result is None:
+            return HTTPStatus.BAD_REQUEST
+
+        user_id, email = result[0], result[1]
+        tokens = await self.__generate_and_save_tokens(
+                user_id=user_id,
+                email=email,
+                user_agent=user_agent
+            )
+        if tokens is None:
+            return HTTPStatus.CONFLICT
         return tokens
 
     async def refresh(self, refresh_token: str, user_agent: str) -> Tokens:
@@ -230,39 +269,19 @@ class AuthService:
             if existing_user in [HTTPStatus.CONFLICT, HTTPStatus.BAD_REQUEST]:
                 return existing_user
 
-            # create access and refresh tokens
-            user_roles = await self.db_service.get_user_roles(
-                user_id=existing_user.id
-            )
-            tokens = await self.__create_tokens(
-                subject=str(existing_user.id),
-                is_ex=True,
-                user_claims={
-                    "roles": user_roles,
-                    "email": existing_user.email
-                }
-            )
-
-            # add access token in redis
-            await self.redis_service.add_token(
-                user_id=str(existing_user.id),
-                access_token=tokens.access_token,
-                user_agent=user_agent
-            )
-
             # change status for refresh token
             await self.db_service.simple_update(
                 what_update=RefreshToken,
                 where_update=[RefreshToken.user_token, refresh_token],
                 values_update={'is_active': false()}
             )
-            # save a refresh token
-            data_refresh_token = RefreshToken(
+            tokens = await self.__generate_and_save_tokens(
                 user_id=existing_user.id,
-                user_token=tokens.refresh_token,
-                is_active=True
+                email=existing_user.email,
+                user_agent=user_agent
             )
-            await self.db_service.insert_data(data_refresh_token)
+            if tokens is None:
+                return HTTPStatus.NOT_IMPLEMENTED
         except Exception:
             return None
         return tokens

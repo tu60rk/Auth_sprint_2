@@ -5,7 +5,7 @@ from core.config import settings
 from typing import Optional
 
 
-redis_conn = Redis(host=settings.redis_host, port=settings.redis_port, db=3)
+redis_conn = Redis(host=settings.AUTH_REDIS_HOST, port=settings.AUTH_REDIS_PORT, db=3)
 
 
 async def check_limit(user_id: str) -> Optional[bool]:

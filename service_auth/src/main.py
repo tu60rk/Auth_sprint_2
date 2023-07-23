@@ -26,20 +26,20 @@ import logging
 async def lifespan(app: FastAPI):
 
     db_redis.redis = Redis(
-        host=settings.redis_host,
-        port=settings.redis_port
+        host=settings.AUTH_REDIS_HOST,
+        port=settings.AUTH_REDIS_PORT
     )
     yield
     await db_redis.redis.close()
 
 
-if settings.enable_tracer:
-    configure_tracer(settings.jaeger_host, settings.jaeger_port)
+if settings.AUTH_JAEGER_ENABLE_TRACER:
+    configure_tracer(settings.AUTH_JAEGER_HOST, settings.AUTH_JAEGER_PORT)
 
 app = FastAPI(
-    title=settings.project_name,
-    description=settings.project_description,
-    version=settings.api_version,
+    title=settings.PROJECT_NAME,
+    description=settings.PROJECT_DESCRIPTION,
+    version=settings.API_VERSION,
     docs_url='/api/v1/openapi',
     openapi_url='/api/v1/openapi.json',
     default_response_class=ORJSONResponse,
@@ -87,8 +87,8 @@ app.include_router(users.router, prefix='/api/v1/users')
 if __name__ == '__main__':
     uvicorn.run(
         'main:app',
-        host=settings.app_host,
-        port=settings.app_port,
+        host=settings.AUTH_APP_HOST,
+        port=settings.AUTH_APP_PORT,
         log_config=LOGGING,
         log_level=logging.DEBUG,
     )

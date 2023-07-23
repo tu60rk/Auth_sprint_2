@@ -5,6 +5,7 @@ Create Date: 2023-07-21
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
@@ -75,6 +76,19 @@ def upgrade():
     sa.Column('role_id', sa.UUID(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
+    )
+
+    op.create_table('social_account',
+    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('social_id', sa.Text(), nullable=False),
+    sa.Column('social_name', sa.Text(), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id'),
+    sa.UniqueConstraint('social_id', 'social_name', name='social_pk')
     )
     # ### end Alembic commands ###
 
