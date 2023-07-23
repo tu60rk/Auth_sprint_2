@@ -2,7 +2,13 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.sql import select, update, insert, delete
 
-from src.models.entity import RefreshToken, Role, UserRoles
+from src.models.entity import (
+    RefreshToken,
+    Role,
+    UserRoles,
+    SocialAccount,
+    User
+)
 from src.core.config import settings
 
 # Создаём движок
@@ -163,3 +169,19 @@ class DbService:
             join_with=UserRoles
         )
         return [role for role in user_roles]
+
+    async def check_account_in_social(self, social_id, social_name) -> list:
+        accounts = await self.db.execute(
+            select(User)
+            .filter(
+                SocialAccount.social_id == social_id,
+                SocialAccount.social_name == social_name)
+            .join(SocialAccount)
+        )
+
+        accounts = [row for row in accounts.scalars()]
+        if len(accounts) == 1:
+            account = accounts[0]
+            user_id = account.id
+            email = account.email
+            return user_id, email

@@ -1,10 +1,13 @@
 from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException, Response, Request
+from fastapi.responses import RedirectResponse
 
 from src.schemas.entity import (
-    UserCreate, UserInDB, LoginUserSchema, Tokens, Status, RefreshToken
+    UserCreate, UserInDB, LoginUserSchema, Tokens, Status, RefreshToken, Login
 )
 from src.services.auth import AuthService, auth_service
+from src.services.providers.yandex import yandex_provider, YandexProvider
+from src.services.providers.base_login import OAuthLogin
 from src.utils.oauth2 import get_current_user
 
 
@@ -41,7 +44,7 @@ async def create_user(
 
 @router.post(
     '/login',
-    response_model=Tokens,
+    response_model=Login,
     status_code=HTTPStatus.ACCEPTED,
     summary="Аутентификация пользователя",
     tags=["Авторизация"],
@@ -71,12 +74,82 @@ async def login(
             status_code=HTTPStatus.UNAUTHORIZED,
             detail='Invalid password'
         )
+
+    if result == HTTPStatus.NOT_IMPLEMENTED:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_IMPLEMENTED,
+            detail="Can't create tokens"
+        )
+
     if not result:
         raise HTTPException(
             status_code=HTTPStatus.BAD_GATEWAY,
             detail="Can't login"
         )
-    return result
+    tokens, ex_user = result[0], result[1]
+    return Login(
+        access_token=tokens.access_token,
+        refresh_token=tokens.refresh_token,
+        email=ex_user.email,
+        user_id=ex_user.id,
+        first_name=ex_user.first_name,
+        last_name=ex_user.last_name
+    )
+
+
+@router.post(
+    '/login/{provider}',
+    response_class=RedirectResponse,
+    status_code=HTTPStatus.SEE_OTHER,
+    summary="Войти с помощью провайдера",
+    tags=["Авторизация"],
+)
+async def provider_login(
+    provider: str,
+):
+    provider = OAuthLogin.get_provider(provider)
+    if provider:
+        return provider.get_auth_url()
+    raise HTTPException(
+        status_code=HTTPStatus.NOT_FOUND,
+        detail='Provider was not found'
+    )
+
+
+@router.get(
+    '/login/yandex/redirect',
+    response_model=Tokens,
+    status_code=HTTPStatus.ACCEPTED,
+    summary="Войти с помощью яндекса",
+    tags=["Авторизация"],
+)
+async def yandex_login_redirect(
+    code: int,
+    request: Request,
+    yandex_provider: YandexProvider = Depends(yandex_provider),
+    auth_service: AuthService = Depends(auth_service)
+):
+    user_agent = request.headers.get("User-Agent")
+    login_result = await auth_service.login_by_yandex(
+        code=code, yandex_provider=yandex_provider, user_agent=user_agent
+    )
+    if login_result == HTTPStatus.CONFLICT:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='User not found'
+        )
+
+    if login_result == HTTPStatus.UNAUTHORIZED:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Invalid password'
+        )
+    if not login_result:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_GATEWAY,
+            detail="Can't login"
+        )
+    return login_result
 
 
 @router.post(
@@ -110,6 +183,12 @@ async def refresh(
     if result == HTTPStatus.BAD_REQUEST:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="Inactive user"
+        )
+
+    if result == HTTPStatus.NOT_IMPLEMENTED:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_IMPLEMENTED,
+            detail="Can't create tokens"
         )
     return result
 

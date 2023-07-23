@@ -2,9 +2,9 @@ import uuid
 from datetime import datetime
 
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Text
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship, backref
 from werkzeug.security import generate_password_hash
 
 Base = declarative_base()
@@ -85,3 +85,17 @@ class RefreshToken(Base, BaseMixin):
     user_token = Column(Text, nullable=False, server_default='default UT')  # здесь потом должна быть функция получающая user_token
     is_active = Column(Boolean, nullable=False, server_default='False')
     user_agent = Column(String(255), nullable=False, server_default='default UA')  # здесь потом должна быть функция получающая useragent
+
+class SocialAccount(Base, BaseMixin):
+    __tablename__ = 'social_account'
+
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    user = relationship(User, backref=backref('social_accounts', lazy=True))
+
+    social_id = Column(Text, nullable=False)
+    social_name = Column(Text, nullable=False)
+
+    __table_args__ = (UniqueConstraint('social_id', 'social_name', name='social_pk'), )
+
+    def __repr__(self):
+        return f'<SocialAccount {self.social_name}:{self.user_id}>'

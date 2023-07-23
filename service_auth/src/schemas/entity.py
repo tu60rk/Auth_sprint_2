@@ -145,3 +145,15 @@ class RefreshToken(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Login(BaseModel):
+    access_token: str
+    refresh_token: str
+    email: EmailStr
+    user_id: UUID
+    first_name: str
+    last_name: str
+
+    class Config:
+        orm_mode = True
