@@ -37,8 +37,8 @@ class AuthService:
     async def __create_tokens(
         self,
         subject: str,
+        user_claims: dict,
         is_ex: bool = True,
-        user_claims: dict = {},
     ) -> Tokens:
 
         params_for_access = {
