@@ -24,16 +24,29 @@ class Settings(BaseSettings):
     elastic_host = os.getenv("FILM_ELASTIC_HOST", "127.0.0.1")
     elastic_port = int(os.getenv("FILM_ELASTIC_PORT", 9200))
 
-    JWT_PUBLIC_KEY: str = os.getenv('JWT_PUBLIC_KEY', None)
-    JWT_ALGORITHM: str = os.getenv('ALGORITHM', 'RS256')
     # Корень проекта
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # Время хранения кэша в Redis
     redis_cache_expires = 60 * 5
 
+class JwtSettings(BaseSettings):
+	JWT_PUBLIC_KEY: str
+	JWT_PRIVATE_KEY: str
+	REFRESH_TOKEN_EXPIRES_IN: int
+	ACCESS_TOKEN_EXPIRES_IN: int
+	JWT_ALGORITHM: str
+	SAULT: str
+
+	REQUEST_LIMIT_PER_MINUTE: int
+
+	class Config:
+		case_sensitive = True
+		env_file = "jwt.env"
 
 settings = Settings()
+jwt_settings = JwtSettings()
+
 
 # Применяем настройки логирования
 logging_config.dictConfig(LOGGING)
