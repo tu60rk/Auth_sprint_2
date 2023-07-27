@@ -8,12 +8,12 @@ services:
       - postgres
       - redis
     env_file:
-      - ../../.env
+      - ../../auth.env
 
   postgres:
     image: postgres:13
     env_file:
-      - ../../.env
+      - ../../auth.env
     ports:
       - 5432:5432
 
@@ -30,7 +30,7 @@ services:
       context: ../../
       dockerfile: ./tests/functional/Dockerfile
     env_file:
-      - ../../.env
+      - ../../auth.env
     depends_on:
       - auth_service
       - redis
