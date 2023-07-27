@@ -105,6 +105,11 @@ celerybeat.pid
 
 # Environments
 .env
+admin.env
+auth.env
+film.env
+jwt.env
+providers.env
 .env.prod
 .venv
 env/
