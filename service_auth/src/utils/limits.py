@@ -1,7 +1,7 @@
 import datetime
 from redis.asyncio import Redis
 
-from core.config import settings
+from core.config import settings, jwt_settings
 from typing import Optional
 
 
@@ -16,5 +16,5 @@ async def check_limit(user_id: str) -> Optional[bool]:
     await pipe.expire(key, 59)
     result = await pipe.execute()
     request_number = result[0]
-    if request_number > settings.REQUEST_LIMIT_PER_MINUTE:
+    if request_number > jwt_settings.REQUEST_LIMIT_PER_MINUTE:
         return True
