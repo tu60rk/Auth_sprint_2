@@ -8,7 +8,7 @@ from typing import Optional
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.core.config import settings
+from src.core.config import jwt_settings
 
 
 class JWTBearer(HTTPBearer):
@@ -54,8 +54,8 @@ class JWTBearer(HTTPBearer):
         try:
             decoded_token = jwt.decode(
                 jwt_token,
-                key=base64.b64decode(settings.JWT_PUBLIC_KEY).decode('utf-8'),
-                algorithms=[settings.JWT_ALGORITHM]
+                key=base64.b64decode(jwt_settings.JWT_PUBLIC_KEY).decode('utf-8'),
+                algorithms=[jwt_settings.JWT_ALGORITHM]
             )
             return decoded_token if decoded_token['exp'] >= time.time() else None
         except Exception:
