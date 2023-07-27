@@ -8,7 +8,7 @@ services:
       - elasticsearch
       - redis
     env_file:
-      - ../../.env
+      - ../../film.env
     command:
       [
         "gunicorn",
@@ -46,7 +46,7 @@ services:
       context: ../../
       dockerfile: ./tests/functional/Dockerfile
     env_file:
-      - ../../.env
+      - ../../film.env
     depends_on:
       - service
       - elasticsearch
@@ -59,7 +59,7 @@ services:
     ports:
       - "8089:8089"
     env_file:
-      - ../../.env
+      - ../../film.env
     entrypoint: locust -f /locust/locust_tests.py --host=http://service:8000
     depends_on:
       - service
