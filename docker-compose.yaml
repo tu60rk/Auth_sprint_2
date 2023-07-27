@@ -8,7 +8,7 @@ services:
       - film_db
       - film_cache
     env_file:
-      - .env
+      - film.env
 
   film_db:
     environment:
@@ -25,7 +25,7 @@ services:
       context: ./service_film_/elastic/
       dockerfile: ./elastic.Dockerfile
     env_file:
-      - .env
+      - film.env
     depends_on:
       - film_db
 
@@ -47,13 +47,13 @@ services:
       - auth_db
       - auth_cache
     env_file:
-      - .env
+      - auth.env
     restart: unless-stopped
 
   auth_db:
     container_name: auth_db
     env_file:
-      - .env
+      - auth.env
     healthcheck:
       test:
         [
@@ -93,7 +93,7 @@ services:
 
   admin_db:
     env_file:
-      - .env
+      - admin.env
     volumes:
       - ./service_admin/db_create.sql:/docker-entrypoint-initdb.d/db_create.sql
     environment:
