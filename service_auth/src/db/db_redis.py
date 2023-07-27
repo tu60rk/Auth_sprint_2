@@ -3,7 +3,7 @@ import json
 from datetime import timedelta
 from typing import Optional
 from redis.asyncio import Redis
-from src.core.config import settings
+from src.core.config import settings, jwt_settings
 
 redis: Optional[Redis] = None
 
@@ -31,7 +31,7 @@ class RedisService:
         await self.redis.set(
             name=user_id,
             value=json.dumps(values),
-            ex=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRES_IN)
+            ex=timedelta(minutes=jwt_settings.ACCESS_TOKEN_EXPIRES_IN)
         )
 
     async def get(self, user_id: str) -> Optional[dict]:
