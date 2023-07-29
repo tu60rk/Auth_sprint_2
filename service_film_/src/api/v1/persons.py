@@ -23,7 +23,7 @@ router = APIRouter()
             response_description="Название и рейтинг фильма",
             tags=['Персона']
             )
-@cache(expire=settings.redis_cache_expires)
+@cache(expire=settings.REDIS_CACHE_EXPIRES)
 async def films_by_person_id(
     user: Annotated[dict, Depends(security_jwt_check)],
     person_id: uuid.UUID,
@@ -56,7 +56,7 @@ async def films_by_person_id(
             response_description="ФИО персоны и роли в фильмах",
             tags=['Персона']
             )
-@cache(expire=settings.redis_cache_expires)
+@cache(expire=settings.REDIS_CACHE_EXPIRES)
 async def person_by_id(
     user: Annotated[dict, Depends(security_jwt_check)],
     person_id: uuid.UUID,
@@ -85,7 +85,7 @@ async def person_by_id(
             response_description="ФИО персоны ",
             tags=['Поиск']
             )
-@cache(expire=settings.redis_cache_expires)
+@cache(expire=settings.REDIS_CACHE_EXPIRES)
 async def person_search(
     user: Annotated[dict, Depends(security_jwt_check)],
     pages: Annotated[PaginateQueryParams, Depends()],

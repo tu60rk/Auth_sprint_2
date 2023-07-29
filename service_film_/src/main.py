@@ -24,8 +24,8 @@ import logging
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
-    es_url = f'http://{settings.elastic_host}:{settings.elastic_port}'
-    redis_url = f'redis://{settings.redis_host}:{settings.redis_port}'
+    es_url = f'http://{settings.FILM_ELASTIC_HOST}:{settings.FILM_ELASTIC_PORT}'
+    redis_url = f'redis://{settings.FILM_REDIS_HOST}:{settings.FILM_REDIS_PORT}'
 
     # load services
     elastic.es = AsyncElasticsearch(hosts=[es_url])
@@ -40,9 +40,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title=settings.project_name,
-    description=settings.project_description,
-    version=settings.api_version,
+    title=settings.PROJECT_NAME,
+    description=settings.PROJECT_DESCRIPTION,
+    version=settings.API_VERSION,
     docs_url='/api/v1/openapi',
     openapi_url='/api/v1/openapi.json',
     default_response_class=ORJSONResponse,
@@ -60,8 +60,8 @@ app.include_router(genres.router, prefix='/api/v1/genres')
 if __name__ == '__main__':
     uvicorn.run(
         'main:app',
-        host=settings.app_host,
-        port=settings.app_port,
+        host=settings.FILM_APP_HOST,
+        port=settings.FILM_APP_PORT,
         reload=True,
         log_config=LOGGING,
         log_level=logging.DEBUG,

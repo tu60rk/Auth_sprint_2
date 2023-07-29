@@ -36,6 +36,10 @@ class Settings(BaseSettings):
 	AUTH_POSTGRES_HOST: str
 	AUTH_POSTGRES_PORT: int
 
+	SAULT: str
+
+	REQUEST_LIMIT_PER_MINUTE: int
+
 	dsl_database: str = Field(
 		None,
 		env="AUTH_POSTGRES_DSL_DATABASE"
@@ -55,9 +59,6 @@ class JwtSettings(BaseSettings):
 	REFRESH_TOKEN_EXPIRES_IN: int
 	ACCESS_TOKEN_EXPIRES_IN: int
 	JWT_ALGORITHM: str
-	SAULT: str
-
-	REQUEST_LIMIT_PER_MINUTE: int
 
 	class Config:
 		case_sensitive = True
