@@ -8,7 +8,8 @@ services:
       - film_db
       - film_cache
     env_file:
-      - .env
+      - film.env
+      - jwt.env
 
   film_db:
     environment:
@@ -25,7 +26,7 @@ services:
       context: ./service_film_/elastic/
       dockerfile: ./elastic.Dockerfile
     env_file:
-      - .env
+      - film.env
     depends_on:
       - film_db
 
@@ -47,13 +48,15 @@ services:
       - auth_db
       - auth_cache
     env_file:
-      - .env
+      - auth.env
+      - jwt.env
+      - providers.env
     restart: unless-stopped
 
   auth_db:
     container_name: auth_db
     env_file:
-      - .env
+      - auth.env
     healthcheck:
       test:
         [
@@ -74,7 +77,6 @@ services:
     volumes:
       - ./service_auth/redis/redis.conf:/usr/local/etc/redis/redis.conf
 
-
   auth_jaeger:
     container_name: auth_jaeger
     depends_on:
@@ -82,9 +84,10 @@ services:
 
   # ------- admin panel ------ #
   admin_service:
+    container_name: admin_service
     build:
-      context: ./service_admin/
-      dockerfile: django.Dockerfile
+      context: .
+      dockerfile: ./service_admin/django.Dockerfile
     command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --no-input --clear && gunicorn config.wsgi:application --bind ${ADMIN_APP_HOST}:${ADMIN_APP_PORT}"
     volumes:
       - static_volume:/app/static
@@ -92,8 +95,9 @@ services:
       - admin_db
 
   admin_db:
+    container_name: admin_db
     env_file:
-      - .env
+      - admin.env
     volumes:
       - ./service_admin/db_create.sql:/docker-entrypoint-initdb.d/db_create.sql
     environment:

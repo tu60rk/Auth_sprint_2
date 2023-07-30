@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from src.db.postgres import get_session, DbService
 from src.schemas.entity import ShemaAccountHistory, Status, UserInDB
 from src.models.entity import AccountHistory, User
-from src.core.config import settings
+from src.core.config import jwt_settings
 
 
 class UserService:
@@ -54,14 +54,14 @@ class UserService:
 
             password_match = check_password_hash(
                 pwhash=user.hash_password,
-                password=settings.SAULT + user.email + current_password
+                password=jwt_settings.SAULT + user.email + current_password
             )
 
             if not password_match:
                 return HTTPStatus.UNAUTHORIZED
 
             user.hash_password = generate_password_hash(
-                password=settings.SAULT + user.email + password
+                password=jwt_settings.SAULT + user.email + password
             )
             await self.db_service.db.commit()
             return Status(status='success')
@@ -93,14 +93,14 @@ class UserService:
 
             password_match = check_password_hash(
                 pwhash=user.hash_password,
-                password=settings.SAULT + user_info.email + current_password
+                password=jwt_settings.SAULT + user_info.email + current_password
             )
             if not password_match:
                 return HTTPStatus.UNAUTHORIZED
 
             user.email = new_email
             user.hash_password = generate_password_hash(
-                password=settings.SAULT + new_email + current_password
+                password=jwt_settings.SAULT + new_email + current_password
             )
             await self.db_service.db.commit()
             return Status(status='success')

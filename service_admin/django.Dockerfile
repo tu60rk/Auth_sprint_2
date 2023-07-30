@@ -13,13 +13,14 @@ ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV DJANGO_SETTINGS_MODULE 'config.settings'
 
-COPY requirements.txt requirements.txt
-COPY entrypoint.sh entrypoint.sh
+COPY ./service_admin/requirements.txt requirements.txt
+COPY ./service_admin/entrypoint.sh entrypoint.sh
 
 RUN  pip install --upgrade pip \
      && pip install -r requirements.txt
 
-COPY . $HOME_APP
+COPY ./service_admin/ $HOME_APP
+COPY ./admin.env /app/config/.env
 
 RUN chown -R app:app $HOME_APP
 RUN chmod +x entrypoint.sh

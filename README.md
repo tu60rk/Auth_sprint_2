@@ -1,10 +1,7 @@
 # Для запуска проекта
-- создать файл .env в главном каталоге
-- заполнить по примеру .env.example
-- заполнить по примеру .env.example
-- создать файл .env в каталоге service_admin/config
-- в терминале выполнить команду "docker-compose build"
-- в терминале выполнить команду "docker-compose up"
+- создать файлы .env's в главном каталоге как в папке envs
+- в терминале выполнить команду "docker-compose --env-file compose.env build"
+- в терминале выполнить команду "docker-compose --env-file compose.env up"
 
 
 # Для запуска тестов

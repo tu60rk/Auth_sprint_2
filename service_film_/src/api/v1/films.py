@@ -22,7 +22,7 @@ router = APIRouter()
             response_description="Название и рейтинг фильма",
             tags=['Поиск']
             )
-@cache(expire=settings.redis_cache_expires)
+@cache(expire=settings.REDIS_CACHE_EXPIRES)
 async def film_search(
     pages: Annotated[PaginateQueryParams, Depends()],
     film_service: FilmService = Depends(get_film_service),
@@ -58,7 +58,7 @@ async def film_search(
     response_description="Что-то",
     tags=["Кинопроизведение"],
 )
-@cache(expire=settings.redis_cache_expires)
+@cache(expire=settings.REDIS_CACHE_EXPIRES)
 async def films(
     pages: Annotated[PaginateQueryParams, Depends()],
     film_service: FilmService = Depends(get_film_service),

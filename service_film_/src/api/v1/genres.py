@@ -25,7 +25,7 @@ router = APIRouter()
     response_description="Список жанров",
     tags=["Жанры"],
 )
-@cache(expire=settings.redis_cache_expires)
+@cache(expire=settings.REDIS_CACHE_EXPIRES)
 async def get_all_genres(
     user: Annotated[dict, Depends(security_jwt)],
     pages: Annotated[PaginateQueryParams, Depends()],
@@ -53,7 +53,7 @@ async def get_all_genres(
     response_description="Информация о жанре",
     tags=["Жанры"],
 )
-@cache(expire=settings.redis_cache_expires)
+@cache(expire=settings.REDIS_CACHE_EXPIRES)
 async def get_genre_by_id(
     user: Annotated[dict, Depends(security_jwt)],
     genre_id: uuid.UUID,

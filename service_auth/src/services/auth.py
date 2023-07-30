@@ -18,7 +18,7 @@ from src.schemas.entity import Status, UserInDB, Tokens
 from src.models.entity import (
     Role, User, UserRoles, RefreshToken, AccountHistory
 )
-from src.core.config import settings
+from src.core.config import jwt_settings
 from core.oauth2 import AuthJWT
 from .providers.yandex import YandexProvider
 
@@ -54,7 +54,7 @@ class AuthService:
             params_for_access.update(
                 {
                     "expires_time": timedelta(
-                        minutes=settings.ACCESS_TOKEN_EXPIRES_IN
+                        minutes=jwt_settings.ACCESS_TOKEN_EXPIRES_IN
                     )
                 }
             )
@@ -62,7 +62,7 @@ class AuthService:
             params_for_refresh.update(
                 {
                     "expires_time": timedelta(
-                        days=settings.REFRESH_TOKEN_EXPIRES_IN
+                        days=jwt_settings.REFRESH_TOKEN_EXPIRES_IN
                     )
                 }
             )
@@ -149,7 +149,7 @@ class AuthService:
     async def create_user(self, user_info: UserInDB) -> Optional[UserInDB]:
         try:
             user_dto = jsonable_encoder(user_info)
-            user_dto['password'] = settings.SAULT + user_dto['email'] + user_dto['password']
+            user_dto['password'] = jwt_settings.SAULT + user_dto['email'] + user_dto['password']
             user = User(**user_dto)
 
             roles = await self.db_service.simple_select(
@@ -203,7 +203,7 @@ class AuthService:
 
             password_match = check_password_hash(
                 pwhash=existing_user.hash_password,
-                password=settings.SAULT + existing_user.email + passwd
+                password=jwt_settings.SAULT + existing_user.email + passwd
             )
 
             if not password_match:
@@ -224,8 +224,8 @@ class AuthService:
             await self.db_service.insert_data(data_header)
             # set cookie
             if set_cookie:
-                response.set_cookie('access_token', tokens.access_token, settings.ACCESS_TOKEN_EXPIRES_IN, settings.ACCESS_TOKEN_EXPIRES_IN, '/', None, False, True, 'lax')
-                response.set_cookie('refresh_token', tokens.refresh_token, settings.REFRESH_TOKEN_EXPIRES_IN, settings.REFRESH_TOKEN_EXPIRES_IN, '/', None, False, True, 'lax')
+                response.set_cookie('access_token', tokens.access_token, jwt_settings.ACCESS_TOKEN_EXPIRES_IN, jwt_settings.ACCESS_TOKEN_EXPIRES_IN, '/', None, False, True, 'lax')
+                response.set_cookie('refresh_token', tokens.refresh_token, jwt_settings.REFRESH_TOKEN_EXPIRES_IN, jwt_settings.REFRESH_TOKEN_EXPIRES_IN, '/', None, False, True, 'lax')
         except Exception:
             return None
         return tokens, existing_user
