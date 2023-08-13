@@ -35,7 +35,7 @@ services:
   #     context: .
   #     dockerfile: ./faker/faker.Dockerfile
   #   env_file:
-  #     - ./.env
+  #     - ./admin.env
   #   depends_on:
   #     - elasticsearch
 
@@ -104,6 +104,16 @@ services:
       - POSTGRES_DB=${FILM_POSTGRES_DB}
       - POSTGRES_USER=${FILM_POSTGRES_USER}
       - POSTGRES_PASSWORD=${FILM_POSTGRES_PASSWORD}
+
+  # ------- UGC service ------ #
+  ugc_service:
+    build: ./service_ugc/.
+    container_name: ugc_service
+    env_file:
+      - ugc.env
+    ports:
+      - "8001:8000"
+    restart: unless-stopped
 
   # common services
   nginx:
