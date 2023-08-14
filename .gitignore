@@ -104,13 +104,14 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+admin.env
 compose.env
 admin.env
 auth.env
 film.env
 jwt.env
 providers.env
+ugc.env
 .env.prod
 .venv
 env/
