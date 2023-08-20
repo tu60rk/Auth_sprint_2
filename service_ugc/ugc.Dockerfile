@@ -6,7 +6,8 @@ WORKDIR /opt/app
 RUN python -m venv /opt/app/venv
 ENV PATH="/opt/app/venv/bin:$PATH"
 
-COPY service_ugc/requirements.txt .
+# COPY service_ugc/requirements.txt .
+COPY ./requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -24,8 +25,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PATH="/opt/app/venv/bin:$PATH"
 
-COPY service_ugc/src ./src
-COPY service_ugc/entrypoint.sh entrypoint.sh
+COPY ./src ./src
+COPY ./entrypoint.sh entrypoint.sh
 
 RUN chown -R app:app /opt/app
 RUN chmod +x entrypoint.sh

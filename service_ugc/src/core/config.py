@@ -10,10 +10,9 @@ class UGCSettings(BaseSettings):
 	UGC_APP_HOST: str
 	UGC_APP_PORT: int
 
-	UGC_REDIS_HOST: str
-	UGC_REDIS_PORT: int
-
-	KAFKA_INSTANCE: str = os.getenv("KAFKA_INSTANCE", "localhost:29092")
+	KAFKA_HOST: str
+	KAFKA_PORT: int
+	KAFKA_INSTANCE: str = Field('Common')
 
 	class Config:
 		case_sensitive = True
@@ -21,3 +20,4 @@ class UGCSettings(BaseSettings):
 
 
 ugc_settings = UGCSettings()
+ugc_settings.KAFKA_INSTANCE = f'{ugc_settings.KAFKA_HOST}:{ugc_settings.KAFKA_PORT}'
