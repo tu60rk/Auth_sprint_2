@@ -107,7 +107,9 @@ services:
 
   # ------- UGC service ------ #
   ugc_service:
-    build: ./service_ugc/.
+    build:
+      context: ./service_ugc/.
+      dockerfile: ./ugc.Dockerfile
     container_name: ugc_service
     env_file:
       - ugc.env
